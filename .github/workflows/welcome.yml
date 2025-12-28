@@ -1,15 +1,48 @@
+# Nombre del workflow
 name: Post welcome comment
+
+#Sintaxis para activar workflow (on:)
 on:
+
+# Evento que activa el workflow (pull_request)
   pull_request:
+# Filtro del pull request
     types: [opened]
+
+# Cada workflow maneja un token efimero (GITHUB_TOKEN) que se crea al activar el workflow.
+# GITHUB maneja variables y secretos
+# Una variable es un valor no sensible que podria o no podria cambiar entre ambientes.
+# Un secreto es un dato sensible que podria o no podria cambiar entre ambientes.
+
+# GITHUB_TOKEN es un valor que maneja github para poder interactuar con los demás servicios de la plataforma github enterprise.
+
+# Se le estas asignando permisos al token GITHUB_TOKEN
 permissions:
+# Se le asigna permisos de escritura unicamente a los pull request
   pull-requests: write
+
+# Sección para especificar los jobs
 jobs:
+# nombre del job (welcome)
   welcome:
+# Seudónimo del job welcome
     name: Post welcome comment
+# Donde se ejecutará el job? runner self hosted? o github hosted? en este caso github hosted.
+# en runs-on especificas el nombre del runner, en este caso lo ejecutaremos en un ubuntu.
     runs-on: ubuntu-latest
+# el job por si solo no hace nada, hay que especificar tareas, entonces debes colocar steps.
     steps:
+
+# A través de run, puedes ejecutar linea de comandos.
+# Github dispone una CLI llamada gh
+# A través de env podemos especificar variables de entorno.
+
       - run: gh pr comment "$PR_URL" --body "Welcome to the repository!"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          
+      - run: echo "Hola $NOMBRE"
+        env:
+          NOMBRE: Aldo
+      
